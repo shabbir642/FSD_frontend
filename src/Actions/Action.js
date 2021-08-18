@@ -48,9 +48,21 @@ export const listask = (tasks) => {
 		payload: tasks,
 	};
 };
-// export const login = (user) => {
-// 	return {
-// 		type: Types.LOGIN,
-// 		payload: user, 
-// 	};
-// };
+export const updatetask = (task) => {
+	return{
+		type: Types.UPDATETASK,
+		payload: task,
+	};
+};
+export const makeadmin = (id) => {
+	return {
+		type: Types.MAKEADMIN,
+		payload: id, 
+	};
+};
+export const removeadmin = (id) => {
+	return {
+		type: Types.REMOVEADMIN,
+		payload: id, 
+	};
+};
