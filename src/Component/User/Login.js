@@ -38,7 +38,7 @@ class Login extends Component {
         this.setState({ errors });
     }
 
-    login = async (event) => {
+    login = (event) => {
         this.setState({ submitted : true });
         event.preventDefault();
          axios.post(`http://localhost:8000/api/login`, {
@@ -50,7 +50,7 @@ class Login extends Component {
             localStorage.setItem("user",JSON.stringify(response.data.user));
             // console.log('here');
                 this.props.login(response.data.user);
-                this.props.history.push('/Welcome');
+                this.props.history.push('/Dashboard');
              }).catch((error) => {
             this.setState({loginstatus: 'Invalid Email or passowrd'});
          });
@@ -70,7 +70,7 @@ class Login extends Component {
 
                 <div className="form-group">
                     <label>Password</label>
-                    <input type="text" value={password} name = "password" id = "password" className="form-control" placeholder="Enter password" onChange ={(e) => {this.inputchange(e) }} />
+                    <input type="password" value={password} name = "password" id = "password" className="form-control" placeholder="Enter password" onChange ={(e) => {this.inputchange(e) }} />
                     {submitted && errors.password.length > 0 && <span className='error'>{errors.password}</span>}
                 </div>
                 <div>
