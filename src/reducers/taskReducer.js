@@ -13,7 +13,7 @@ const taskReducer = ( state = initialState, action) => {
 		case Types.LISTASK: {
 		return {
 			...state,
-			tasks: [...action.payload.tasks]
+			tasks: [...action.payload]
 	 	};
 	  }
 	  case Types.DELETETASK:{
@@ -22,6 +22,26 @@ const taskReducer = ( state = initialState, action) => {
 	  		...state,
 	  		tasks:[...state.tasks.filter((task) => task.id!=id)]
 	  	}
+	  }
+	  case Types.UPDATETASK:{
+	  	const id = action.payload.id;
+	  	return {
+	  		...state,
+	  		tasks: state.tasks.map(task => {
+	  			if(task.id !== id){
+	  				return task
+	  			}
+	  			return {
+	  				...task,
+	  				title: action.payload.title,
+	  				description: action.payload.description,
+	  				deadline: action.payload.deadline,
+	  				assignee: action.payload.assignee
+	  			}
+	  		})
+
+	  	}
+
 	  }
 	default: {
 		return state;
