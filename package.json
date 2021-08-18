@@ -9,13 +9,24 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
+    "highcharts": "^9.1.2",
+    "highcharts-react-official": "^3.0.0",
+    "js-cookie": "^3.0.0",
+    "pusher-js": "^7.0.3",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.1",
+    "react-bootstrap-sidebar": "0.0.1",
+    "react-burger-menu": "^3.0.6",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-table": "^7.7.0",
+    "react-toastify": "^7.0.4",
     "redux": "^4.1.0",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^5.3.0",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -41,5 +52,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.14.5",
+    "babel-core": "^6.26.3"
   }
 }
