@@ -1,13 +1,14 @@
 import React from 'react'
 import axios from "axios";
 import { connect } from 'react-redux';
-import { Link } from "react-router-dom";
 import Sideheader from "../Support/Sidebar";
-import { Table, Modal, Button, ButtonToolbar } from 'react-bootstrap';
-import Createtask from './Createtask';
+import Navbar from "../Support/Navbar";
+import { Table } from 'react-bootstrap';
 import Searchtask from './Searchtask';
+import Updatetask from './Updatetask';
 import { listask, deletetask } from '../../Actions/Action';
-import Navbar from '../Support/Navbar'
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 class Tasklist extends React.Component {
     constructor(props) {
         super(props);
@@ -17,6 +18,7 @@ class Tasklist extends React.Component {
         };
     }
     componentDidMount() {
+        // console.log(this.props.Auth.id);
         axios.post('http://localhost:8000/api/mytask', {
             id: this.props.Auth.id
         }, {
@@ -24,15 +26,16 @@ class Tasklist extends React.Component {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
             },
         }).then(res => {
-            this.setState({
-                tasks: res.data
-            });
+            // this.setState({
+            //     tasks: res.data
+            // });
+            console.log(res);
             this.props.listask(res.data);
         }).catch((error) => {
             console.log(error);
         })
     }
-    ondelete = async (id) => {
+    ondelete = (id) => {
         axios.get(`http://localhost:8000/api/deletetask/${id}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -40,41 +43,48 @@ class Tasklist extends React.Component {
         }).then((response) => {
             console.log(response);
             this.props.deletetask(id);
-            window.location.reload();
-            alert("Task deleted");
         }).catch((error) => {
             console.log(error);
-            alert(error);
         });
     }
-    statuschange = async (id) => {
+    statuschange = (event) => {
+        console.log(event.target.value);
         axios.post(`http://localhost:8000/api/updatestatus`, {
-            id: id,
-            status: this.state.status
+            id: event.target.name,
+            status: event.target.value
         }, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
             },
         }).then((response) => {
             console.log(response);
-            //need redux //
-            alert("Status change");
-            window.location.reload();
+            this.setState({
+            status: event.target.value
+          });
         }).catch((error) => {
             console.log(error);
-            alert(error);
         });
     }
+    formattime = (newdate) => {
+        if(newdate){
+        var date = new Date(newdate);
+        var options = {
+           hour: 'numeric',
+           minute: 'numeric',
+           hour12: true
+       };
+       var timeString = date.toLocaleString('en-US', options);
+        var onlydate = newdate.split(' ')[0];
+        return onlydate + ',' + timeString;
+      }
+   }
     render() {
         return (
             <div>
-            
-            <div className="box-cell box1"> 
             <Sideheader/> 
-            </div>
-            <div className = "box-cell box2" >
+            <div className = "box-cell box2" style={{marginLeft: "165px", marginTop:"65px", marginRight:"10px"}}>
             <Searchtask />
-            <Link to="/Createtask">Add Task</Link> { /*<button type="submit" className="btn btn-primary" onClick = {Createtask}>Add new task</button>*/ }
+             { /*<button type="submit" className="btn btn-primary" onClick = {Createtask}>Add new task</button>*/ }
             <Table striped bordered hover size="sm">
     <thead>
     <tr>
@@ -88,18 +98,17 @@ class Tasklist extends React.Component {
     </tr>
     </thead>
     <tbody>
-    {this.state.tasks.map((task) => (
+    {this.props.tasks.tasks.map((task) => (
        <tr key = {task.id}>
 
        <td>{task.title}</td>
        <td>{task.description}</td>
        <td>{task.assignor}</td>
        <td>{task.assignee}</td>
-       <td>{task.deadline}</td>
-       <td>{task.status}</td>
+       <td>{this.formattime(task.deadline)}</td>
        <td>
-       {this.props.Auth.id == task.assignee ? 
-       (<select className="form-control mb-3" defaultValue={task.status} onChange={(e) => this.setState({status: e.target.value})}>
+       {this.props.Auth.id === task.assignee ? 
+       (<select className="form-control mb-3" name={task.id} defaultValue={task.status} onChange={this.statuschange}>
 
        <option value="Assigned">Assigned</option>
        <option value="In-progress">In-progress</option>
@@ -107,10 +116,13 @@ class Tasklist extends React.Component {
 
        </select>)
 
-       : " "}
-       {this.props.Auth.id == task.assignor ? 
-       <button type="Submit" className="btn btn-primary" onClick = {()=>this.ondelete(task.id)}>Delete</button>: " "
-   }
+       : task.status }
+       </td>
+       <td>
+       {this.props.Auth.id === task.assignor ?
+       <button type="Submit" className="btn btn-primary" onClick = {()=>this.ondelete(task.id)}>Delete</button>
+       : " "
+       }
    </td>
    </tr>
    ))}
@@ -124,8 +136,8 @@ class Tasklist extends React.Component {
 }
 const mapStateToProps = (state) =>{
     return{
-        Auth: state.auth.loggeduser
+        Auth: state.auth.loggeduser,
+        tasks:state.tasks
     }
 }
 export default connect(mapStateToProps, { listask, deletetask })(Tasklist);
-// <button type="Submit" className="btn btn-primary" onClick = {()=>this.statuschange(task.id)}>Change Status</button>
