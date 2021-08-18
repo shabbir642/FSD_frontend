@@ -54,7 +54,7 @@ export class Signup extends Component {
         this.checkerror(event);
     }
 
-    signup = async (event) => {
+    signup = (event) => {
         this.setState({ submitted: true });
         // console.log(event);
          event.preventDefault();
@@ -66,8 +66,9 @@ export class Signup extends Component {
                 })
                 .then((response) => {
                     console.log(response);
+                    this.setState({ registerstatus: true});
                         this.props.signup(this.state.user);
-                        this.props.history.push('/Login');
+                        // this.props.history.push('/Login');
                 })
                 .catch((err) => {
                     console.log(err);
@@ -77,7 +78,15 @@ export class Signup extends Component {
     render() {
         const { username, email, password, confirm_password } = this.state.user;
         const { registerstatus, submitted } = this.state;
-
+        if(this.state.registerstatus)
+        {
+            return (<div>
+                <div className="alert">
+                    Please verify your email to complete signup
+                </div>
+            </div>
+            )
+        }
         return (
             <div className="auth-wrapper">
             <div className="auth-inner">
@@ -120,4 +129,3 @@ export class Signup extends Component {
 }
 
 export default connect(null, { signup })(Signup);
-
