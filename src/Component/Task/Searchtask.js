@@ -11,9 +11,9 @@ class Searchtask extends Component {
             title: '',
             description: '',
             assignee: '',
-            deadline: '',
+            from: '',
+            to: '',
             status: '',
-            submitted: false,
             users:[]
         }
     }
@@ -28,48 +28,46 @@ class Searchtask extends Component {
     }
     inputchange = (event) => {
         const { name, value } = event.target;
-        console.log('here');
         this.setState({ [name]: value });
     }
     login = async (event) => {
         this.setState({ submitted: true });
         event.preventDefault();
         // console.log("here");
-        console.log(this.state.status);
-        axios.post("http://localhost:8000/api/filtertask", {
-            title: this.state.title,
-            description: this.state.description,
-            assignee: this.state.assignee,
-            deadline: this.state.deadline,
-            status: this.state.status
-        }, {
+        console.log(this.state);
+        let data = {
+            title: this.state.title === "" ? undefined : this.state.title,
+            description: this.state.description === "" ? undefined : this.state.description,
+            assignee: this.state.assignee === "" ? undefined: this.state.assignee,
+            from: this.state.from === "" ? undefined: this.state.from,
+            to: this.state.to === "" ? undefined: this.state.to,
+            status: this.state.status === "" ? undefined: this.state.status,
+        };
+        // console.log(this.state.from);
+        axios.post(`http://localhost:8000/api/filtertask`, data ,{
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem("token")}`,
-            }
-
+            },
         })
         .then((response) => {
             console.log(response);
             this.props.listask(response.data);
-            this.props.history.push('/Tasklist');
-            console.log("Shabbir hussain");
         }).catch((error) => {
             console.log(error);
         });
     }
     render() {
-        const { users, title, description, assignee, status, deadline, submitted } = this.state;
+        const { users, title, description, assignee, status, from, to} = this.state;
         return (
             <>
             <div className="row">
             <div className="col">
-              <label>Title</label>
               <input type="text" id="title" value={title} name="title" placeholder="Search by Title" onChange={(e) => {this.inputchange(e)}} />
             </div>
             {this.props.Auth.admin? (
             <div className="col">
-              <label>Assignee</label>
               <select name="assignee" value={assignee} onChange={(e) => {this.inputchange(e)}}>
+              <option value="null"> Assignee </option>
               {users.map((user)=>
                 <option key={user.id}>{user.id}</option>
                 )}
@@ -78,16 +76,20 @@ class Searchtask extends Component {
             </div>)
             : " "}
              <div className="col">
-              <label>Status</label>
                <select name="status" value={status} onChange={(e) => {this.inputchange(e)}}>
+                <option value="Status">Status</option>
                 <option value="Assigned">Assigned</option>
                 <option value="In-progress">In-progress</option>
                 <option value="Completed">Completed</option>
                 </select>
             </div>
-             <div className="col">
-              <label>Deadline</label>
-              <input type="date"  id="deadline" value={deadline} name="deadline" placeholder="Deadline" onChange={(e) => {this.inputchange(e)}}/>
+            <div className="col">
+              <label>From</label>
+              <input type="date"  id="from" value={from} name="from" onChange={(e) => {this.inputchange(e)}}/>
+            </div>
+            <div className="col">
+              <label>To</label>
+              <input type="date"  id="to" value={to} name="to" placeholder="to" onChange={(e) => {this.inputchange(e)}}/>
             </div>
             <div className="col">
             <button type="submit" className="btn btn-primary" onClick={this.login}>Submit</button>
@@ -98,11 +100,11 @@ class Searchtask extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state,ownProps) => {
+    // console.log(ownProps);
     return {
         task: state.tasks,
         Auth: state.auth.loggeduser
     }
 }
 export default connect(mapStateToProps, { listask })(Searchtask);
-// disabled={!(email.length && description.length)}
