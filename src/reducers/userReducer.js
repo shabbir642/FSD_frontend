@@ -7,7 +7,7 @@ const taskReducer = ( state = initialState, action) => {
 		case Types.LISTUSER: {
 		return {
 			...state,
-			users: [...action.payload.users]
+			users: [...action.payload]
 	 	};
 	  }
 	  case Types.SIGNUP:
@@ -21,7 +21,37 @@ const taskReducer = ( state = initialState, action) => {
 	  	...state,
 	  	users: [...state.users.filter((user) => user.id !== id)]
 	  };
-	}
+	  }
+	  case Types.MAKEADMIN:{
+	  	const id = action.payload;
+	  	return {
+	  		...state,
+	  		users: state.users.map(user => {
+	  			if(user.id !== id){
+	  				return user
+	  			}
+	  			return {
+	  				...user,
+	  				admin: !user.admin
+	  			}
+	  		})
+	  	}
+	  }
+	  case Types.REMOVEADMIN:{
+	  	const id = action.payload;
+	  	return {
+	  		...state,
+	  		users: state.users.map(user => {
+	  			if(user.id !== id){
+	  				return user
+	  			}
+	  			return {
+	  				...user,
+	  				admin: !user.admin
+	  			}
+	  		})
+	  	}
+	  }
 	default: {
 		return state;
 	}
